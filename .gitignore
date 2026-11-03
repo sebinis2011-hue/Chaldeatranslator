@@ -1,0 +1,31 @@
+# Configuracion local
+config/settings.json
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Modelos
+models/
+*.gguf
+*.ggml
+*.bin
+
+# Datos locales
+database/
+history/
+logs/
+
+# Copias de seguridad
+backups/
+
+# Temporales
+*.tmp
+*.bak
+*.swp
+.DS_Store

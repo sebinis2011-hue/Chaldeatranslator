@@ -1,0 +1,618 @@
+{
+  "metadata": {
+    "name": "Chaldea Translator - Fate Glossary",
+    "version": "1.1.0",
+    "language": "es-419",
+    "description": "Glosario canon de Fate y Fate/Grand Order. Separado de las extensiones de universos alternativos.",
+    "total_terms": 49
+  },
+  "rules": {
+    "preserve_fixed_terms": true,
+    "respect_context": true,
+    "do_not_replace_with_synonyms": true,
+    "do_not_translate_proper_names": true,
+    "canon_only": true,
+    "exclude_fanfiction_terminology": true
+  },
+  "categories": {
+    "servant_classes": "Clases de Servant",
+    "summoning": "Invocacion y naturaleza espiritual",
+    "magecraft": "Magia y sistemas sobrenaturales",
+    "organizations": "Organizaciones",
+    "fgo_story": "Narrativa de Fate Grand Order",
+    "game_systems": "Sistemas y objetos del juego",
+    "servant_designations": "Designaciones y rangos de Servant"
+  },
+  "terms": [
+    {
+      "id": "master",
+      "category": "summoning",
+      "source": [
+        "Master"
+      ],
+      "target": "Master",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "servant",
+      "category": "summoning",
+      "source": [
+        "Servant"
+      ],
+      "target": "Servant",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "command_spell",
+      "category": "summoning",
+      "source": [
+        "Command Spell",
+        "令呪"
+      ],
+      "target": "Command Spell",
+      "mode": "fixed",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "noble_phantasm",
+      "category": "summoning",
+      "source": [
+        "Noble Phantasm",
+        "宝具"
+      ],
+      "target": "Noble Phantasm",
+      "mode": "fixed",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "holy_grail_war",
+      "category": "summoning",
+      "source": [
+        "聖杯戦争",
+        "Holy Grail War"
+      ],
+      "target": "Guerra del Santo Grial",
+      "mode": "fixed",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "saint_graph",
+      "category": "summoning",
+      "source": [
+        "霊基",
+        "Saint Graph"
+      ],
+      "target": "Saint Graph",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "heroic_spirit",
+      "category": "summoning",
+      "source": [
+        "英霊",
+        "Heroic Spirit"
+      ],
+      "target": "Espíritu Heroico",
+      "mode": "fixed",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "spirit_origin",
+      "category": "summoning",
+      "source": [
+        "Spirit Origin"
+      ],
+      "target": "Spirit Origin",
+      "mode": "contextual",
+      "confidence": "medium",
+      "scope": "fate",
+      "notes": "Mantener diferenciado de Saint Graph. No asignar 霊基 automaticamente a este termino sin evidencia contextual suficiente."
+    },
+    {
+      "id": "summoning",
+      "category": "summoning",
+      "source": [
+        "Summoning",
+        "召喚"
+      ],
+      "target": "Invocación",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "contract",
+      "category": "summoning",
+      "source": [
+        "契約",
+        "Contract"
+      ],
+      "target": "Contrato",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "saber",
+      "category": "servant_classes",
+      "source": [
+        "Saber",
+        "セイバー"
+      ],
+      "target": "Saber",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "archer",
+      "category": "servant_classes",
+      "source": [
+        "Archer",
+        "アーチャー"
+      ],
+      "target": "Archer",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "lancer",
+      "category": "servant_classes",
+      "source": [
+        "Lancer",
+        "ランサー"
+      ],
+      "target": "Lancer",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "rider",
+      "category": "servant_classes",
+      "source": [
+        "Rider",
+        "ライダー"
+      ],
+      "target": "Rider",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "caster",
+      "category": "servant_classes",
+      "source": [
+        "Caster",
+        "キャスター"
+      ],
+      "target": "Caster",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "assassin",
+      "category": "servant_classes",
+      "source": [
+        "Assassin",
+        "アサシン"
+      ],
+      "target": "Assassin",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "berserker",
+      "category": "servant_classes",
+      "source": [
+        "Berserker",
+        "バーサーカー"
+      ],
+      "target": "Berserker",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "ruler",
+      "category": "servant_classes",
+      "source": [
+        "Ruler",
+        "ルーラー"
+      ],
+      "target": "Ruler",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "avenger",
+      "category": "servant_classes",
+      "source": [
+        "Avenger",
+        "アヴェンジャー"
+      ],
+      "target": "Avenger",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "moon_cancer",
+      "category": "servant_classes",
+      "source": [
+        "Moon Cancer",
+        "ムーンキャンサー"
+      ],
+      "target": "Moon Cancer",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "alter_ego",
+      "category": "servant_classes",
+      "source": [
+        "Alter Ego",
+        "アルターエゴ"
+      ],
+      "target": "Alter Ego",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "foreigner",
+      "category": "servant_classes",
+      "source": [
+        "Foreigner",
+        "フォーリナー"
+      ],
+      "target": "Foreigner",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "pretender",
+      "category": "servant_classes",
+      "source": [
+        "Pretender",
+        "プリテンダー"
+      ],
+      "target": "Pretender",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "shielder",
+      "category": "servant_classes",
+      "source": [
+        "Shielder",
+        "シールダー"
+      ],
+      "target": "Shielder",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "beast",
+      "category": "servant_classes",
+      "source": [
+        "Beast",
+        "ビースト"
+      ],
+      "target": "Beast",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate",
+      "notes": "Categoria excepcional asociada a las Beasts. FGO la integra en Extra II para determinados sistemas de juego, aunque no pertenece a las siete clases basicas."
+    },
+    {
+      "id": "grand_servant",
+      "category": "servant_designations",
+      "source": [
+        "Grand Servant"
+      ],
+      "target": "Grand Servant",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate",
+      "notes": "Designacion especial de rango Grand asociada a una clase. No constituye una clase independiente."
+    },
+    {
+      "id": "magecraft",
+      "category": "magecraft",
+      "source": [
+        "魔術",
+        "Magecraft"
+      ],
+      "target": "Magecraft",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate",
+      "notes": "No confundir con True Magic. No traducir automaticamente como magia."
+    },
+    {
+      "id": "true_magic",
+      "category": "magecraft",
+      "source": [
+        "魔法",
+        "True Magic"
+      ],
+      "target": "True Magic",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate",
+      "notes": "Concepto distinto de Magecraft dentro de TYPE-MOON."
+    },
+    {
+      "id": "magus",
+      "category": "magecraft",
+      "source": [
+        "魔術師",
+        "Magus"
+      ],
+      "target": "Magus",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "magic_circuit",
+      "category": "magecraft",
+      "source": [
+        "魔術回路",
+        "Magic Circuit"
+      ],
+      "target": "Magic Circuit",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "magic_crest",
+      "category": "magecraft",
+      "source": [
+        "魔術刻印",
+        "Magic Crest"
+      ],
+      "target": "Magic Crest",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "reality_marble",
+      "category": "magecraft",
+      "source": [
+        "固有結界",
+        "Reality Marble"
+      ],
+      "target": "Reality Marble",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "root",
+      "category": "magecraft",
+      "source": [
+        "根源",
+        "the Root",
+        "Akasha"
+      ],
+      "target": "the Root",
+      "mode": "contextual",
+      "confidence": "medium",
+      "scope": "fate",
+      "notes": "No confundir con una raiz literal. Conservar Akasha cuando sea nombre propio o forma usada en el original."
+    },
+    {
+      "id": "mana",
+      "category": "magecraft",
+      "source": [
+        "魔力",
+        "Mana"
+      ],
+      "target": "Mana",
+      "mode": "contextual",
+      "confidence": "medium",
+      "scope": "fate",
+      "notes": "Distinguir de energia magica, prana y otros conceptos segun el contexto."
+    },
+    {
+      "id": "chaldea",
+      "category": "organizations",
+      "source": [
+        "Chaldea",
+        "カルデア"
+      ],
+      "target": "Chaldea",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "mages_association",
+      "category": "organizations",
+      "source": [
+        "Mage's Association",
+        "Mages' Association",
+        "魔術協会"
+      ],
+      "target": "Mage's Association",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "clock_tower",
+      "category": "organizations",
+      "source": [
+        "Clock Tower",
+        "時計塔"
+      ],
+      "target": "Clock Tower",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "atlas_institute",
+      "category": "organizations",
+      "source": [
+        "Atlas Institute",
+        "アトラス院"
+      ],
+      "target": "Atlas Institute",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "wandering_sea",
+      "category": "organizations",
+      "source": [
+        "Wandering Sea",
+        "彷徨海"
+      ],
+      "target": "Wandering Sea",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fate"
+    },
+    {
+      "id": "singularity",
+      "category": "fgo_story",
+      "source": [
+        "Singularity",
+        "特異点"
+      ],
+      "target": "Singularity",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "lostbelt",
+      "category": "fgo_story",
+      "source": [
+        "Lostbelt",
+        "異聞帯"
+      ],
+      "target": "Lostbelt",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "rayshift",
+      "category": "fgo_story",
+      "source": [
+        "Rayshift",
+        "レイシフト"
+      ],
+      "target": "Rayshift",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "fantasy_tree",
+      "category": "fgo_story",
+      "source": [
+        "Fantasy Tree",
+        "空想樹"
+      ],
+      "target": "Fantasy Tree",
+      "mode": "contextual",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "crypter",
+      "category": "fgo_story",
+      "source": [
+        "Crypter",
+        "クリプター"
+      ],
+      "target": "Crypter",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "craft_essence",
+      "category": "game_systems",
+      "source": [
+        "Craft Essence"
+      ],
+      "target": "Craft Essence",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "command_code",
+      "category": "game_systems",
+      "source": [
+        "Command Code"
+      ],
+      "target": "Command Code",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "mystic_code",
+      "category": "game_systems",
+      "source": [
+        "Mystic Code"
+      ],
+      "target": "Mystic Code",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "saint_quartz",
+      "category": "game_systems",
+      "source": [
+        "Saint Quartz"
+      ],
+      "target": "Saint Quartz",
+      "mode": "preserve",
+      "confidence": "high",
+      "scope": "fgo"
+    },
+    {
+      "id": "quantum_piece",
+      "category": "game_systems",
+      "source": [
+        "Quantum Piece",
+        "QP"
+      ],
+      "target": "QP",
+      "mode": "contextual",
+      "confidence": "medium",
+      "scope": "fgo",
+      "notes": "QP es la abreviatura habitual. Quantum Piece es la expansion usada por Atlas Academy; comprobar localizacion antes de imponerla."
+    }
+  ]
+}
