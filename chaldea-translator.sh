@@ -26,7 +26,7 @@ if [ -z "$INPUT" ]; then
     exit 1
 fi
 
-PROMPT="Traduce el siguiente texto al español latino natural. Conserva los nombres propios y la terminología de Fate: Master, Servant y Noble Phantasm. Traduce 令呪 como Hechizo de Comando y 聖杯戦争 como Guerra del Santo Grial. Respeta la personalidad y las emociones de los personajes. Traduce todo el texto sin omitir ni repetir frases. Devuelve solamente la traducción.
+PROMPT="Traduce el siguiente texto al español latino natural. Conserva los nombres propios y la terminología de Fate: Master, Servant y Noble Phantasm. Traduce 令呪 como Command Spell y 聖杯戦争 como Guerra del Santo Grial. Respeta la personalidad y las emociones de los personajes. Traduce todo el texto sin omitir ni repetir frases. Devuelve solamente la traducción.
 
 $INPUT"
 
