@@ -88,7 +88,10 @@ def health():
     response_model=TranslationResponse,
     dependencies=[Depends(require_api_key)],
 )
-def translate(payload: TranslationRequest):
+def translate(
+    payload: TranslationRequest,
+    engine: LlamaCppServerEngine = Depends(get_engine),
+):
     glossary = load_fate_glossary()
     prompt = build_translation_prompt(
         payload.text,
@@ -97,7 +100,6 @@ def translate(payload: TranslationRequest):
         context=payload.context,
         character=payload.character,
     )
-    engine = get_engine()
 
     try:
         translated = engine.translate(
