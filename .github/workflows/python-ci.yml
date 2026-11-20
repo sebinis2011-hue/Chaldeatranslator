@@ -52,7 +52,10 @@ jobs:
         run: python -m compileall -q api core tests
 
       - name: Verify Termux shell script syntax
-        run: bash -n chaldea-translator.sh
+        run: |
+          bash -n chaldea-translator.sh
+          bash -n scripts/termux-setup.sh
+          bash -n scripts/termux-local.sh
 
       - name: Run unit tests with branch coverage
         run: |
