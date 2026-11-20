@@ -4,9 +4,26 @@ Traductor literario para videojuegos y novelas visuales, con ejecución local y 
 
 ## Estado del proyecto
 
-La base actual incluye construcción de prompts, selección contextual de terminología Fate, validación terminológica y una API FastAPI que se comunica con un servidor llama.cpp compatible con la API de OpenAI.
+La base incluye construcción de prompts, selección contextual de terminología Fate, validación terminológica y una API FastAPI que se comunica con un servidor llama.cpp compatible con la API de OpenAI.
 
 La API y el motor de inferencia son componentes separados. El repositorio no incluye el modelo GGUF ni aloja un modelo de IA.
+
+## Ejecutar en Android con Termux
+
+El modo local permite ejecutar llama.cpp y la API en el mismo teléfono, sin Render ni un servidor de inferencia externo.
+
+1. Clona este repositorio dentro del almacenamiento privado de Termux.
+2. Ejecuta `bash scripts/termux-setup.sh` para instalar herramientas, compilar `llama-server` y preparar el entorno Python.
+3. Coloca un modelo GGUF compatible en `$HOME/models/`.
+4. Inicia ambos procesos con:
+
+```bash
+CHALDEA_MODEL_PATH="$HOME/models/TU_MODELO.gguf" bash scripts/termux-local.sh start
+```
+
+El servidor y la API escuchan únicamente en `127.0.0.1`; no se exponen a la red Wi-Fi. Para detenerlos, usa `bash scripts/termux-local.sh stop`. Consulta [la guía detallada de Termux](docs/DEVELOPMENT_ENVIRONMENT.md).
+
+La compilación se realiza en el teléfono y puede tardar, calentar el dispositivo y consumir varios GB temporales. Mantén el teléfono ventilado, conectado a corriente si es seguro y cierra otras aplicaciones pesadas. El modelo no se descarga automáticamente.
 
 ## Desarrollo y pruebas
 
@@ -14,23 +31,15 @@ La API y el motor de inferencia son componentes separados. El repositorio no inc
 - Instala las dependencias: `python -m pip install -r requirements.txt`.
 - Comprueba la sintaxis: `python -m compileall -q api core tests`.
 - Ejecuta las pruebas: `python -m unittest discover -s tests -v`.
-- Consulta [el entorno de desarrollo cloud](docs/DEVELOPMENT_ENVIRONMENT.md).
-
-GitHub Actions comprueba Python 3.12 y 3.13, consistencia de dependencias, sintaxis del script Termux y pruebas unitarias con cobertura de ramas.
+- GitHub Actions valida Python 3.12 y 3.13, dependencias, scripts Bash y pruebas unitarias.
 
 ## API HTTP
 
-La API ofrece `GET /health`, `GET /health/ready` y `POST /v1/translate`.
-
-Consulta [la documentación de la API](docs/API.md) para configurarla y conectar un servidor llama.cpp. Antes de habilitar traducciones, configura `CHALDEA_API_KEY` y `CHALDEA_LLAMACPP_URL` como variables de entorno; nunca guardes claves en el repositorio.
-
-## Ejecución local
-
-El script `chaldea-translator.sh` está orientado a Termux. Requiere un binario local de llama.cpp y un modelo GGUF compatible. Las rutas se pueden configurar mediante `CHALDEA_LLAMA_CLI` y `CHALDEA_MODEL_PATH`.
+La API ofrece `GET /health`, `GET /health/ready` y `POST /v1/translate`. Consulta [la documentación de la API](docs/API.md).
 
 ## Privacidad y costes
 
-- No subas modelos GGUF, archivos de configuración privados, tokens, claves API ni historiales personales.
-- El entorno de desarrollo cloud es opcional; utiliza solo la cuota gratuita disponible y no actives facturación.
-- La API no proporciona inferencia gratuita por sí misma: necesita un servidor de modelo accesible.
-- OCR contextual y memoria persistente deben considerarse funciones pendientes hasta que estén implementadas y probadas en el repositorio.
+- El modo Termux es local y no requiere alojamiento ni inferencia de pago.
+- No subas modelos GGUF, archivos de configuración privados, claves API ni historiales personales.
+- Codespaces es opcional; úsalo solo dentro de la cuota gratuita y sin activar facturación.
+- OCR contextual y memoria persistente siguen pendientes de implementación y validación.
