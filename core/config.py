@@ -17,48 +17,54 @@ def load_config():
 
     try:
         config = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
         raise ConfigurationError(f"JSON inválido: {exc}") from exc
 
+    if not isinstance(config, dict):
+        raise ConfigurationError("La configuración debe ser un objeto JSON.")
+
     for section in ("application", "engine", "translation", "storage"):
-        if section not in config:
-            raise ConfigurationError(f"Falta la sección: {section}")
+        if section not in config or not isinstance(config[section], dict):
+            raise ConfigurationError(f"Falta la sección válida: {section}")
 
     engine = config["engine"]
-
     for key in ("executable", "model", "context_size", "threads", "max_tokens"):
         if key not in engine:
             raise ConfigurationError(f"Falta engine.{key}")
 
-    engine["executable"] = os.path.expandvars(engine["executable"].replace("$HOME", str(Path.home())))
-    engine["model"] = os.path.expandvars(engine["model"].replace("$HOME", str(Path.home())))
+    for key in ("executable", "model"):
+        if not isinstance(engine[key], str) or not engine[key].strip():
+            raise ConfigurationError(f"engine.{key} debe ser una ruta no vacía.")
+        expanded = engine[key].replace("$HOME", str(Path.home()))
+        engine[key] = os.path.expandvars(expanded)
+
+    for key in ("context_size", "threads", "max_tokens"):
+        value = engine[key]
+        if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+            raise ConfigurationError(f"engine.{key} debe ser un entero mayor que cero.")
 
     return config
 
 
 def validate_engine(config):
-    engine = config["engine"]
+    try:
+        engine = config["engine"]
+    except (KeyError, TypeError) as exc:
+        raise ConfigurationError("Falta la sección engine.") from exc
+
     executable = Path(engine["executable"])
     model = Path(engine["model"])
-
     errors = []
 
     if not executable.is_file():
         errors.append(f"No se encuentra llama-cli: {executable}")
+    elif not os.access(executable, os.X_OK):
+        errors.append(f"llama-cli no tiene permiso de ejecución: {executable}")
 
     if not model.is_file():
         errors.append(f"No se encuentra el modelo: {model}")
 
-    if engine["context_size"] <= 0:
-        errors.append("context_size debe ser mayor que cero")
-
-    if engine["threads"] <= 0:
-        errors.append("threads debe ser mayor que cero")
-
-    if engine["max_tokens"] <= 0:
-        errors.append("max_tokens debe ser mayor que cero")
-
     if errors:
-        raise ConfigurationError("\\n".join(errors))
+        raise ConfigurationError("\n".join(errors))
 
     return True

@@ -1,37 +1,36 @@
 # ChaldeaTranslator
 
-Traductor literario multilingüe para videojuegos y novelas visuales, con ejecución local, OCR contextual y memoria de traducción.
+Traductor literario para videojuegos y novelas visuales, con ejecución local y una API HTTP opcional.
 
-## Estado actual
+## Estado del proyecto
 
-El repositorio contiene el núcleo inicial de construcción de prompts, selección contextual de terminología Fate y validación de traducciones, además de pruebas unitarias.
+La base actual incluye construcción de prompts, selección contextual de terminología Fate, validación terminológica y una API FastAPI que se comunica con un servidor llama.cpp compatible con la API de OpenAI.
 
-## Desarrollo
+La API y el motor de inferencia son componentes separados. El repositorio no incluye el modelo GGUF ni aloja un modelo de IA.
 
-- [Entorno de desarrollo en la nube](docs/DEVELOPMENT_ENVIRONMENT.md)
-- [Código principal](core/)
-- [Glosario Fate](glossary/fate.json)
-- [Pruebas](tests/)
+## Desarrollo y pruebas
 
-### Ejecutar pruebas localmente
+- Python recomendado: 3.12.
+- Instala las dependencias: `python -m pip install -r requirements.txt`.
+- Comprueba la sintaxis: `python -m compileall -q api core tests`.
+- Ejecuta las pruebas: `python -m unittest discover -s tests -v`.
+- Consulta [el entorno de desarrollo cloud](docs/DEVELOPMENT_ENVIRONMENT.md).
 
-Requiere Python 3.12 o posterior. Desde la raíz del repositorio:
+GitHub Actions comprueba Python 3.12 y 3.13, consistencia de dependencias, sintaxis del script Termux y pruebas unitarias con cobertura de ramas.
 
-```bash
-python -m compileall -q core tests
-python -m unittest discover -s tests -v
-```
+## API HTTP
 
-### Desarrollo remoto
+La API ofrece `GET /health`, `GET /health/ready` y `POST /v1/translate`.
 
-Usa **Code → Codespaces → Create codespace** en GitHub. La configuración de `.devcontainer/` prepara el entorno Python remoto y ejecuta las pruebas al iniciar.
+Consulta [la documentación de la API](docs/API.md) para configurarla y conectar un servidor llama.cpp. Antes de habilitar traducciones, configura `CHALDEA_API_KEY` y `CHALDEA_LLAMACPP_URL` como variables de entorno; nunca guardes claves en el repositorio.
 
-GitHub Actions también ejecuta las pruebas automáticamente. Consulta la pestaña **Actions** para ver los resultados.
+## Ejecución local
 
-## Motor de traducción
+El script `chaldea-translator.sh` está orientado a Termux. Requiere un binario local de llama.cpp y un modelo GGUF compatible. Las rutas se pueden configurar mediante `CHALDEA_LLAMA_CLI` y `CHALDEA_MODEL_PATH`.
 
-El script `chaldea-translator.sh` está orientado al entorno Termux y espera una instalación local de `llama.cpp` y el modelo GGUF Index-Translate-2B. El entorno cloud de desarrollo no incluye ni ejecuta ese modelo automáticamente.
+## Privacidad y costes
 
-## Privacidad
-
-No subas `config/settings.json`, modelos GGUF, tokens, claves API, historiales privados ni archivos de usuario al repositorio.
+- No subas modelos GGUF, archivos de configuración privados, tokens, claves API ni historiales personales.
+- El entorno de desarrollo cloud es opcional; utiliza solo la cuota gratuita disponible y no actives facturación.
+- La API no proporciona inferencia gratuita por sí misma: necesita un servidor de modelo accesible.
+- OCR contextual y memoria persistente deben considerarse funciones pendientes hasta que estén implementadas y probadas en el repositorio.

@@ -17,6 +17,6 @@
       }
     }
   },
-  "postCreateCommand": "python -m compileall -q core tests && python -m unittest discover -s tests -v",
+  "postCreateCommand": "python -m pip install -r requirements.txt && python -m compileall -q api core tests && python -m unittest discover -s tests -v",
   "remoteUser": "vscode"
 }
