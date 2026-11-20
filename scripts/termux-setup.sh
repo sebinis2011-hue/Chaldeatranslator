@@ -17,7 +17,7 @@ echo "== ChaldeaTranslator: preparación local para Termux =="
 echo "No se instalará ningún servicio de nube ni se descargará un modelo de IA."
 
 pkg update
-pkg install -y clang cmake git make pkg-config python curl
+pkg install -y clang cmake git make pkg-config python curl libandroid-spawn
 
 if [ ! -d "$LLAMA_DIR/.git" ]; then
   if [ -e "$LLAMA_DIR" ]; then
