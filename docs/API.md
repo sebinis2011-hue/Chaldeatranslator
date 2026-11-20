@@ -2,54 +2,31 @@
 
 ## Estado y alcance
 
-La API ofrece una interfaz HTTP para el nucleo Python. La version inicial
-incluye:
+La API ofrece una interfaz HTTP para el núcleo Python:
 
-- `GET /health`: estado del proceso y configuracion basica.
-- `POST /v1/translate`: traduccion con el perfil y el glosario Fate.
-- Validacion posterior de terminologia y estructura.
-- Autenticacion mediante la cabecera `X-API-Key`.
+- `GET /health`: comprueba que el proceso API está vivo.
+- `GET /health/ready`: comprueba que llama.cpp responde.
+- `POST /v1/translate`: traduce con el perfil y el glosario Fate.
+- Valida la terminología y la estructura de la traducción.
+- Protege las solicitudes de traducción mediante `X-API-Key`.
 
-La API **no incluye ni descarga un modelo**. El motor se conecta a un servidor
-`llama.cpp` que exponga la API compatible con OpenAI.
+La API no incluye ni descarga un modelo GGUF. Se conecta a un servidor llama.cpp compatible con OpenAI.
 
-## Desarrollo
+## Modo local en Termux
 
-Python 3.12 es la version recomendada.
+El script `scripts/termux-local.sh` inicia llama.cpp en el puerto 8080 y FastAPI en el puerto 8000, ambos enlazados únicamente a `127.0.0.1`. Consulta [la guía de Termux](DEVELOPMENT_ENVIRONMENT.md) para compilar e iniciar el sistema.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+La clave se genera en el propio dispositivo y se guarda en `$HOME/.config/chaldeatranslator/api.key`. No la guardes en Git ni la compartas.
 
-Configura una clave aleatoria para las solicitudes:
+## Solicitud de traducción
+
+Con los procesos locales iniciados:
 
 ```bash
-export CHALDEA_API_KEY="reemplaza-por-una-clave-larga-y-aleatoria"
-```
-
-Cuando exista un servidor llama.cpp compatible, configura su URL:
-
-```bash
-export CHALDEA_LLAMACPP_URL="http://127.0.0.1:8080"
-export CHALDEA_MODEL_NAME="local-model"
-```
-
-Inicia la API:
-
-```bash
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-```
-
-Documentacion interactiva: `/docs`. Estado: `/health`.
-
-## Ejemplo de solicitud
-
-```bash
+API_KEY="$(cat "$HOME/.config/chaldeatranslator/api.key")"
 curl -X POST "http://127.0.0.1:8000/v1/translate" \
   -H "Content-Type: application/json" \
-  -H "X-API-Key: $CHALDEA_API_KEY" \
+  -H "X-API-Key: $API_KEY" \
   -d '{
     "text": "Master, use your Command Spell.",
     "content_type": "dialogue",
@@ -58,27 +35,15 @@ curl -X POST "http://127.0.0.1:8000/v1/translate" \
   }'
 ```
 
-## Despliegue
+Documentación interactiva: `http://127.0.0.1:8000/docs`.
 
-Para un despliegue publico, configura `CHALDEA_API_KEY` como variable secreta
-del servicio. No la guardes en Git ni en el codigo cliente.
+## Configuración avanzada
 
-Configura tambien `CHALDEA_LLAMACPP_URL` para que apunte a un servidor de
-inferencia accesible desde el servicio. Una URL como `127.0.0.1` dentro de
-Render apunta al propio contenedor de Render; no conecta automaticamente con
-el telefono ni con un servidor externo.
+- `CHALDEA_API_KEY`: clave necesaria para traducir.
+- `CHALDEA_LLAMACPP_URL`: URL base del motor llama.cpp.
+- `CHALDEA_MODEL_NAME`: nombre lógico del modelo.
+- `CHALDEA_ENGINE_TIMEOUT`: espera máxima de inferencia en segundos.
 
-No se debe desplegar el endpoint de traduccion sin una clave API. La API
-responde con error 503 si falta `CHALDEA_API_KEY` o si el motor no esta
-configurado/disponible.
+En modo local, el lanzador configura `CHALDEA_LLAMACPP_URL=http://127.0.0.1:8080` automáticamente.
 
-## Variables de entorno
-
-| Variable | Obligatoria | Descripcion |
-|---|---|---|
-| `CHALDEA_API_KEY` | Si, para traducir | Secreto para autenticar solicitudes |
-| `CHALDEA_LLAMACPP_URL` | Si, para traducir | URL base del servidor llama.cpp |
-| `CHALDEA_MODEL_NAME` | No | Nombre de modelo esperado por el servidor |
-| `CHALDEA_ENGINE_TIMEOUT` | No | Tiempo maximo de espera en segundos (120 por defecto) |
-
-El endpoint de salud no expone valores secretos.
+No expongas la API en una interfaz pública ni cambies el host a `0.0.0.0` sin implementar controles de acceso y TLS.
