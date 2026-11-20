@@ -1,0 +1,21 @@
+{
+  "application": {
+    "name": "ChaldeaTranslator",
+    "language": "es-419"
+  },
+  "engine": {
+    "executable": "$HOME/llama.cpp/build/bin/llama-cli",
+    "model": "$HOME/models/Index-Translate-2B.Q4_K_M.gguf",
+    "context_size": 2048,
+    "threads": 4,
+    "max_tokens": 256
+  },
+  "translation": {
+    "default_profile": "dialogue",
+    "temperature": 0
+  },
+  "storage": {
+    "history_enabled": false,
+    "directory": "$HOME/.local/share/chaldeatranslator"
+  }
+}
