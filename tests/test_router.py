@@ -65,11 +65,23 @@ class TestEngineRouter(unittest.TestCase):
 
         with self.assertRaises(EngineUnavailableError):
             router.translate("prompt", mode="auto", allow_cloud=False)
+        self.assertEqual(local.calls, 1)
         self.assertEqual(cloud.calls, 0)
 
         result = router.translate("prompt", mode="auto", allow_cloud=True)
         self.assertEqual(result, "cloud result")
         self.assertEqual(cloud.calls, 1)
+
+    def test_auto_uses_healthy_local_without_cloud_consent(self):
+        local = FakeEngine(result="local result")
+        cloud = FakeEngine(result="cloud result")
+        router = EngineRouter(local_engine=local, cloud_engines={"free": cloud})
+
+        result = router.translate("prompt", mode="auto", allow_cloud=False)
+
+        self.assertEqual(result, "local result")
+        self.assertEqual(local.calls, 1)
+        self.assertEqual(cloud.calls, 0)
 
     def test_status_does_not_expose_provider_secrets(self):
         local = FakeEngine(result="local")
