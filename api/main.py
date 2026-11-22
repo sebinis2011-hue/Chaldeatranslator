@@ -1,7 +1,7 @@
 """API HTTP de ChaldeaTranslator.
 
-La API orquesta prompts, glosario, motor y validacion. No aloja ni descarga
-el modelo: llama.cpp debe estar disponible en CHALDEA_LLAMACPP_URL.
+La API conserva el pipeline de prompts, glosario y validación, y permite
+seleccionar motor local o proveedores cloud compatibles.
 """
 
 import hmac
@@ -13,8 +13,9 @@ from typing import Literal
 from fastapi import Depends, FastAPI, Header, HTTPException, status
 from pydantic import BaseModel, Field, field_validator
 
-from core.engine import EngineUnavailableError, LlamaCppServerEngine
+from core.engine import EngineUnavailableError
 from core.prompts import build_translation_prompt
+from core.router import EngineRouter
 from core.validator import validate_translation
 
 
@@ -32,10 +33,10 @@ def load_fate_glossary():
 app = FastAPI(
     title="ChaldeaTranslator API",
     description=(
-        "API de traduccion literaria con glosario contextual de Fate. "
-        "Requiere un servidor llama.cpp compatible con OpenAI."
+        "API de traducción literaria con glosario contextual de Fate y "
+        "motores locales o cloud configurables."
     ),
-    version="0.1.1",
+    version="0.2.0",
 )
 
 
@@ -45,6 +46,9 @@ class TranslationRequest(BaseModel):
     context: str | None = Field(default=None, max_length=4000)
     character: str | None = Field(default=None, max_length=120)
     max_tokens: int = Field(default=512, ge=1, le=2048)
+    engine_mode: Literal["local", "cloud", "auto"] = "local"
+    provider: str | None = Field(default=None, min_length=1, max_length=80)
+    allow_cloud: bool = False
 
     @field_validator("text")
     @classmethod
@@ -78,35 +82,40 @@ def require_api_key(x_api_key: str | None = Header(default=None, alias="X-API-Ke
 
 
 def get_engine():
-    return LlamaCppServerEngine()
+    return EngineRouter()
 
 
 @app.get("/health/live")
 @app.get("/health")
 def health():
-    """Comprueba que el proceso API está vivo; no garantiza que haya IA disponible."""
+    """Comprueba el proceso y publica solo el estado no secreto de los motores."""
+    engine_status = get_engine().status()
     return {
         "status": "ok",
-        "engine_configured": get_engine().is_configured,
+        "engines": engine_status,
         "api_key_configured": bool(os.getenv("CHALDEA_API_KEY")),
     }
 
 
 @app.get("/health/ready")
 def readiness():
-    """Comprueba que el servidor llama.cpp responde a su endpoint /health."""
+    """La API está lista si hay un motor local sano o cloud configurado."""
     engine = get_engine()
-    if not engine.is_configured:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="CHALDEA_LLAMACPP_URL no está configurada.",
-        )
-    if not engine.check_health():
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="El servidor llama.cpp no está disponible.",
-        )
-    return {"status": "ready", "engine": "llama.cpp"}
+    engine_status = engine.status()
+    if engine_status["local_configured"] and engine.check_local_health():
+        return {"status": "ready", "available_mode": "local"}
+    if engine_status["cloud_configured"]:
+        # La configuración se valida localmente; no se envía texto ni se
+        # realiza una petición facturable al proveedor durante readiness.
+        return {
+            "status": "ready",
+            "available_mode": "cloud",
+            "cloud_providers": engine_status["cloud_providers"],
+        }
+    raise HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        detail="No hay un motor local disponible ni proveedores cloud configurados.",
+    )
 
 
 @app.post(
@@ -116,7 +125,7 @@ def readiness():
 )
 def translate(
     payload: TranslationRequest,
-    engine: LlamaCppServerEngine = Depends(get_engine),
+    engine: EngineRouter = Depends(get_engine),
 ):
     glossary = load_fate_glossary()
     prompt = build_translation_prompt(
@@ -131,6 +140,9 @@ def translate(
         translated = engine.translate(
             prompt,
             max_tokens=payload.max_tokens,
+            mode=payload.engine_mode,
+            allow_cloud=payload.allow_cloud,
+            provider=payload.provider,
         )
     except EngineUnavailableError as exc:
         raise HTTPException(
