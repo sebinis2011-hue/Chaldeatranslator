@@ -92,22 +92,26 @@ class EngineRouter:
         if mode == "local":
             return self.local_engine.translate(prompt, max_tokens=max_tokens)
 
-        if not allow_cloud:
-            raise EngineUnavailableError(
-                "El envío a proveedores cloud no está autorizado para esta solicitud. "
-                "Confirma expresamente el envío antes de activar allow_cloud."
-            )
-
         if mode == "cloud":
+            if not allow_cloud:
+                raise EngineUnavailableError(
+                    "El envío a proveedores cloud no está autorizado para esta solicitud. "
+                    "Confirma expresamente el envío antes de activar allow_cloud."
+                )
             return self._cloud_engine(provider).translate(
                 prompt, max_tokens=max_tokens
             )
 
-        # auto: intentar local primero. El fallback cloud solo existe con
-        # consentimiento explícito para esta solicitud.
+        # auto siempre prueba local primero. La autorización solo se exige
+        # si es necesario recurrir a un proveedor remoto.
         try:
             return self.local_engine.translate(prompt, max_tokens=max_tokens)
         except EngineUnavailableError as local_error:
+            if not allow_cloud:
+                raise EngineUnavailableError(
+                    "El motor local no está disponible y no se autorizó el envío cloud. "
+                    f"Detalle local: {local_error}"
+                ) from local_error
             try:
                 return self._cloud_engine(provider).translate(
                     prompt, max_tokens=max_tokens
