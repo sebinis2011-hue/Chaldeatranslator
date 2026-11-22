@@ -4,11 +4,16 @@
     "language": "es-419"
   },
   "engine": {
-    "executable": "$HOME/llama.cpp/build/bin/llama-cli",
-    "model": "$HOME/models/Index-Translate-2B.Q4_K_M.gguf",
-    "context_size": 2048,
-    "threads": 4,
-    "max_tokens": 256
+    "default_mode": "local",
+    "local": {
+      "executable": "$HOME/llama.cpp/build/bin/llama-cli",
+      "model": "$HOME/models/Index-Translate-2B.Q4_K_M.gguf",
+      "context_size": 2048,
+      "threads": 4,
+      "max_tokens": 256
+    },
+    "cloud_providers_file": "config/cloud-providers.json",
+    "cloud_requires_request_consent": true
   },
   "translation": {
     "default_profile": "dialogue",
