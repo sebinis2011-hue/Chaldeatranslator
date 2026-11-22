@@ -1,11 +1,12 @@
 """Selector de motores local y cloud con consentimiento explícito.
 
-CHALDEA_CLOUD_PROVIDERS contiene una lista JSON de proveedores
-OpenAI-compatible. Las claves se referencian por nombre de variable de entorno.
+Los proveedores se configuran mediante CHALDEA_CLOUD_PROVIDERS (JSON) o
+CHALDEA_CLOUD_PROVIDERS_FILE. Las claves se referencian por variables de entorno.
 """
 
 import json
 import os
+from pathlib import Path
 
 from core.cloud_engine import OpenAICompatibleCloudEngine
 from core.engine import EngineUnavailableError, LlamaCppServerEngine
@@ -14,21 +15,34 @@ from core.engine import EngineUnavailableError, LlamaCppServerEngine
 class EngineRouter:
     def __init__(self, local_engine=None, cloud_engines=None):
         self.local_engine = local_engine or LlamaCppServerEngine()
-        self.cloud_engines = cloud_engines or self._load_cloud_engines()
+        self.cloud_engines = (
+            cloud_engines if cloud_engines is not None
+            else self._load_cloud_engines()
+        )
 
     @staticmethod
     def _load_cloud_engines():
-        raw = os.getenv("CHALDEA_CLOUD_PROVIDERS", "[]")
+        config_file = os.getenv("CHALDEA_CLOUD_PROVIDERS_FILE", "")
+        if config_file:
+            try:
+                raw = Path(config_file).expanduser().read_text(encoding="utf-8")
+            except OSError as exc:
+                raise EngineUnavailableError(
+                    "No se pudo leer CHALDEA_CLOUD_PROVIDERS_FILE."
+                ) from exc
+        else:
+            raw = os.getenv("CHALDEA_CLOUD_PROVIDERS", "[]")
+
         try:
             configs = json.loads(raw)
         except json.JSONDecodeError as exc:
             raise EngineUnavailableError(
-                "CHALDEA_CLOUD_PROVIDERS debe contener una lista JSON válida."
+                "La configuración de proveedores cloud debe ser JSON válido."
             ) from exc
 
         if not isinstance(configs, list):
             raise EngineUnavailableError(
-                "CHALDEA_CLOUD_PROVIDERS debe ser una lista JSON."
+                "La configuración de proveedores cloud debe ser una lista JSON."
             )
 
         engines = {}
@@ -81,7 +95,7 @@ class EngineRouter:
         if not allow_cloud:
             raise EngineUnavailableError(
                 "El envío a proveedores cloud no está autorizado para esta solicitud. "
-                "Activa allow_cloud solo después de confirmar el envío del texto."
+                "Confirma expresamente el envío antes de activar allow_cloud."
             )
 
         if mode == "cloud":
@@ -116,5 +130,4 @@ class EngineRouter:
                     f"El proveedor cloud '{provider}' no está configurado o habilitado."
                 )
             return engine
-        # Orden determinista para que el proveedor predeterminado no cambie.
         return self.cloud_engines[sorted(self.cloud_engines)[0]]
