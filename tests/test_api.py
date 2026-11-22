@@ -10,9 +10,31 @@ from api.main import app, get_engine
 class FakeEngine:
     is_configured = True
 
-    def translate(self, prompt, max_tokens=512):
+    def __init__(self):
+        self.prompt = ""
+        self.options = {}
+
+    def status(self):
+        return {
+            "local_configured": True,
+            "cloud_configured": False,
+            "cloud_providers": [],
+        }
+
+    def check_local_health(self):
+        return False
+
+    def translate(
+        self, prompt, max_tokens=512, mode="local",
+        allow_cloud=False, provider=None,
+    ):
         self.prompt = prompt
-        self.max_tokens = max_tokens
+        self.options = {
+            "max_tokens": max_tokens,
+            "mode": mode,
+            "allow_cloud": allow_cloud,
+            "provider": provider,
+        }
         return "Hola, Master. Usa tu Command Spell."
 
 
@@ -55,6 +77,24 @@ class TestTranslationAPI(unittest.TestCase):
         self.assertTrue(body["valid"])
         self.assertIn("Command Spell", self.engine.prompt)
         self.assertEqual(body["glossary"], "Chaldea Translator - Fate Glossary")
+        self.assertEqual(self.engine.options["mode"], "local")
+        self.assertFalse(self.engine.options["allow_cloud"])
+
+    def test_cloud_choice_is_passed_only_when_explicitly_requested(self):
+        response = self.client.post(
+            "/v1/translate",
+            headers={"X-API-Key": "test-secret"},
+            json={
+                "text": "Hello, Master.",
+                "engine_mode": "cloud",
+                "provider": "example",
+                "allow_cloud": True,
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.engine.options["mode"], "cloud")
+        self.assertEqual(self.engine.options["provider"], "example")
+        self.assertTrue(self.engine.options["allow_cloud"])
 
     def test_rejects_empty_text(self):
         response = self.client.post(
@@ -72,9 +112,8 @@ class TestTranslationAPI(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 422)
 
-    def test_readiness_returns_503_when_engine_url_is_missing(self):
-        with patch.dict(os.environ, {"CHALDEA_LLAMACPP_URL": ""}):
-            response = self.client.get("/health/ready")
+    def test_readiness_returns_503_when_no_engine_is_ready(self):
+        response = self.client.get("/health/ready")
         self.assertEqual(response.status_code, 503)
 
     def test_rejects_unknown_content_profile(self):
