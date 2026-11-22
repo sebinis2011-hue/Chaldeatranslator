@@ -1,0 +1,22 @@
+[
+  {
+    "id": "free-provider-example",
+    "tier": "free",
+    "base_url": "https://api.example.com/v1",
+    "model": "model-name",
+    "api_key_env": "CHALDEA_FREE_PROVIDER_API_KEY",
+    "api_key_required": true,
+    "chat_completions_path": "/chat/completions",
+    "timeout": 90
+  },
+  {
+    "id": "optional-paid-provider-example",
+    "tier": "paid",
+    "base_url": "https://api.example-paid.com/v1",
+    "model": "model-name",
+    "api_key_env": "CHALDEA_PAID_PROVIDER_API_KEY",
+    "api_key_required": true,
+    "chat_completions_path": "/chat/completions",
+    "timeout": 90
+  }
+]
