@@ -11,6 +11,7 @@ set(GGML_NATIVE OFF CACHE BOOL "" FORCE)
 set(GGML_OPENMP OFF CACHE BOOL "" FORCE)
 set(GGML_LLAMAFILE OFF CACHE BOOL "" FORCE)
 set(GGML_VULKAN OFF CACHE BOOL "" FORCE)
+set(GGML_CPU_KLEIDIAI ON CACHE BOOL "" FORCE)
 set(LLAMA_BUILD_COMMON OFF CACHE BOOL "" FORCE)
 
 FetchContent_Declare(
@@ -18,6 +19,7 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/ggml-org/llama.cpp.git
     GIT_TAG b5401
     GIT_SHALLOW TRUE
+    GIT_SUBMODULES_RECURSE TRUE
 )
 FetchContent_MakeAvailable(llama_cpp)
 
