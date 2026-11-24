@@ -119,11 +119,21 @@ Java_com_sebinis2011_chaldeatranslator_inference_LlamaCppInferenceEngine_nativeT
         throw_java(env, "No se pudo tokenizar el texto de entrada.");
         return nullptr;
     }
-    llama_kv_self_clear(g_context);
-    llama_batch batch = llama_batch_get_one(tokens.data(), static_cast<int32_t>(tokens.size()));
-    if (llama_decode(g_context, batch) != 0) {
-        throw_java(env, "Falló la evaluación del prompt. Reduce su longitud o el contexto.");
+    const uint32_t context_limit = llama_n_ctx(g_context);
+    if (tokens.size() + 8 >= context_limit) {
+        throw_java(env, "El texto supera el contexto disponible. Divide el fragmento y vuelve a intentarlo.");
         return nullptr;
+    }
+    llama_kv_self_clear(g_context);
+    constexpr int32_t prompt_batch_size = 128;
+    for (size_t offset = 0; offset < tokens.size(); offset += prompt_batch_size) {
+        const size_t remaining = tokens.size() - offset;
+        const int32_t count = static_cast<int32_t>(std::min<size_t>(remaining, prompt_batch_size));
+        llama_batch prompt_batch = llama_batch_get_one(tokens.data() + offset, count);
+        if (llama_decode(g_context, prompt_batch) != 0) {
+            throw_java(env, "Falló la evaluación del prompt. Reduce la longitud del fragmento.");
+            return nullptr;
+        }
     }
 
     llama_sampler_chain_params sampler_params = llama_sampler_chain_default_params();
@@ -138,7 +148,8 @@ Java_com_sebinis2011_chaldeatranslator_inference_LlamaCppInferenceEngine_nativeT
     llama_sampler_chain_add(sampler, llama_sampler_init_dist(LLAMA_DEFAULT_SEED));
 
     std::string output;
-    const int limit = std::clamp(static_cast<int>(max_tokens), 1, 1024);
+    const int available_tokens = static_cast<int>(context_limit - tokens.size());
+    const int limit = std::clamp(std::min(static_cast<int>(max_tokens), available_tokens), 1, 1024);
     std::vector<char> piece(256);
     for (int i = 0; i < limit && !g_cancel.load(); ++i) {
         const llama_token token = llama_sampler_sample(sampler, g_context, -1);
