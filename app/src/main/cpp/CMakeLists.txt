@@ -17,8 +17,7 @@ set(LLAMA_BUILD_COMMON OFF CACHE BOOL "" FORCE)
 FetchContent_Declare(
     llama_cpp
     GIT_REPOSITORY https://github.com/ggml-org/llama.cpp.git
-    GIT_TAG b5401
-    GIT_SHALLOW TRUE
+    GIT_TAG bc098c3cf0aac93e57e9bda9d95e2456acf88894
     GIT_SUBMODULES_RECURSE TRUE
 )
 FetchContent_MakeAvailable(llama_cpp)
