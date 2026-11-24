@@ -42,7 +42,7 @@ class ModelDownloadManager(private val modelDirectory:File) {
    }
    val status=connection.responseCode
    val host=connection.url.host.lowercase(Locale.ROOT)
-   require(host=="huggingface.co"||host.endsWith(".huggingface.co")||host.endsWith(".xethub.hf.co")){"Redirección a host no autorizado."}
+   require(host=="huggingface.co"||host.endsWith(".huggingface.co")||host=="hf.co"||host.endsWith(".hf.co")){"Redirección a host no autorizado: $host"}
    val append=offset>0L && status==HttpURLConnection.HTTP_PARTIAL
    if(offset>0L&&!append){part.delete();etagFile.delete();offset=0L}
    require(status==HttpURLConnection.HTTP_OK||append){"Error HTTP $status al descargar."}
