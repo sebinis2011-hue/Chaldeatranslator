@@ -6,6 +6,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
 import java.util.Locale
+import android.os.StatFs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
@@ -26,6 +27,9 @@ class ModelDownloadManager(private val modelDirectory:File) {
   if(target.isFile && target.length()==model.sizeBytes && sha256(target).equals(model.sha256,true)) return@withContext target
   val part=File(modelDirectory,model.fileName+".part")
   val etagFile=File(modelDirectory,model.fileName+".etag")
+  val storage = StatFs(modelDirectory.absolutePath)
+  require(storage.availableBytes >= model.sizeBytes + 128L * 1024L * 1024L) { "No hay espacio libre suficiente para descargar el GGUF con margen." }
+  val savedEtag = etagFile.takeIf { it.isFile }?.readText()?.takeIf { it.isNotBlank() }
   var offset=part.takeIf{it.isFile}?.length()?:0L
   if(offset>model.sizeBytes){part.delete();etagFile.delete();offset=0L}
   var connection:HttpURLConnection?=null
@@ -33,7 +37,7 @@ class ModelDownloadManager(private val modelDirectory:File) {
    connection=(URL(model.downloadUrl).openConnection() as HttpURLConnection).apply {
     instanceFollowRedirects=true;connectTimeout=20_000;readTimeout=60_000
     setRequestProperty("Accept-Encoding","identity")
-    if(offset>0L){setRequestProperty("Range","bytes=$offset-");etagFile.takeIf{it.isFile}?.readText()?.takeIf{it.isNotBlank()}?.let{setRequestProperty("If-Range",it)}}
+    if(offset>0L){setRequestProperty("Range","bytes=$offset-");savedEtag?.let{setRequestProperty("If-Range",it)}}
    }
    val status=connection.responseCode
    val host=connection.url.host.lowercase(Locale.ROOT)
@@ -41,7 +45,9 @@ class ModelDownloadManager(private val modelDirectory:File) {
    val append=offset>0L && status==HttpURLConnection.HTTP_PARTIAL
    if(offset>0L&&!append){part.delete();etagFile.delete();offset=0L}
    require(status==HttpURLConnection.HTTP_OK||append){"Error HTTP $status al descargar."}
-   connection.getHeaderField("ETag")?.let{etagFile.writeText(it)}
+   val responseEtag=connection.getHeaderField("ETag")
+   if(append && savedEtag!=null && responseEtag!=savedEtag) { part.delete(); etagFile.delete(); throw SecurityException("El ETag cambió durante la reanudación; se descartó el parcial.") }
+   responseEtag?.let{etagFile.writeText(it)}
    val expectedRemaining=model.sizeBytes-offset
    val declared=connection.getHeaderFieldLong("Content-Length",-1L)
    require(declared<0L||declared==expectedRemaining){"Longitud HTTP no coincide con catálogo."}
