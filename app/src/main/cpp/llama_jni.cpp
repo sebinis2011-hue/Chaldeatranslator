@@ -13,6 +13,7 @@ std::mutex g_mutex;
 llama_model * g_model = nullptr;
 llama_context * g_context = nullptr;
 std::atomic<bool> g_cancel{false};
+bool g_backend_initialized = false;
 int g_threads = 2;
 
 void release_locked() {
@@ -63,6 +64,7 @@ Java_com_sebinis2011_chaldeatranslator_inference_LlamaCppInferenceEngine_nativeL
     std::lock_guard<std::mutex> lock(g_mutex);
     release_locked();
     g_cancel.store(false);
+    if (!g_backend_initialized) { llama_backend_init(); g_backend_initialized = true; }
     const std::string path = to_utf8(env, model_path);
     if (path.empty()) {
         throw_java(env, "La ruta del modelo está vacía.");
