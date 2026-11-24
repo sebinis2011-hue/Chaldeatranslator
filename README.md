@@ -43,3 +43,17 @@ La API ofrece `GET /health`, `GET /health/ready` y `POST /v1/translate`. Consult
 - No subas modelos GGUF, archivos de configuración privados, claves API ni historiales personales.
 - Codespaces es opcional; úsalo solo dentro de la cuota gratuita y sin activar facturación.
 - OCR contextual y memoria persistente siguen pendientes de implementación y validación.
+
+## Aplicación Android nativa (en desarrollo)
+
+La rama `feature/android-native-app` contiene el inicio de una aplicación Kotlin + Jetpack Compose, separada del modo Termux:
+
+- Proyecto Gradle Android con `minSdk 26`, `compileSdk 35` y objetivo inicial `arm64-v8a` pendiente de enlazar al motor nativo.
+- Primera migración de prompts, perfiles, selección de términos y validación a Kotlin.
+- Glosario Fate original empaquetado como recurso, sin modificar su contenido.
+- Esquema para un Lore Pack con procedencia y niveles de certeza; el paquete inicial está vacío deliberadamente para no introducir afirmaciones de canon sin fuentes.
+- Pruebas unitarias Kotlin y workflow de CI para generar una APK debug.
+
+**Estado real:** es un esqueleto de aplicación y núcleo de traducción; todavía no traduce con IA. La integración JNI de llama.cpp, el gestor seguro de GGUF, las descargas reanudables y la evaluación de modelos están pendientes. No instalar como versión funcional todavía.
+
+Para abrirla, importa la raíz del repositorio en Android Studio y selecciona el módulo `:app`. La CI usa Gradle 8.9 y JDK 17.
