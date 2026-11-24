@@ -8,6 +8,7 @@ plugins {
 android {
     namespace = "com.sebinis2011.chaldeatranslator"
     compileSdk = 35
+    ndkVersion = "27.2.12479018"
 
     defaultConfig {
         applicationId = "com.sebinis2011.chaldeatranslator"
