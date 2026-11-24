@@ -164,8 +164,8 @@ Java_com_sebinis2011_chaldeatranslator_inference_LlamaCppInferenceEngine_nativeT
         }
         if (n > 0) output.append(piece.data(), static_cast<size_t>(n));
         llama_token next = token;
-        batch = llama_batch_get_one(&next, 1);
-        if (llama_decode(g_context, batch) != 0) break;
+        llama_batch decode_batch = llama_batch_get_one(&next, 1);
+        if (llama_decode(g_context, decode_batch) != 0) break;
     }
     llama_sampler_free(sampler);
     return env->NewStringUTF(output.c_str());
