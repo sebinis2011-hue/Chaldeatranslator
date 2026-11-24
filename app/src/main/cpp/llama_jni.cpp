@@ -45,7 +45,7 @@ bool tokenize(const llama_vocab * vocab, const std::string & prompt, std::vector
     int32_t capacity = std::max<int32_t>(256, static_cast<int32_t>(prompt.size() / 2 + 32));
     tokens.resize(static_cast<size_t>(capacity));
     int32_t count = llama_tokenize(vocab, prompt.c_str(), static_cast<int32_t>(prompt.size()),
-                                   tokens.data(), capacity, true, false);
+                                   tokens.data(), capacity, true, true);
     if (count < 0) {
         capacity = -count;
         tokens.resize(static_cast<size_t>(capacity));
