@@ -46,14 +46,15 @@ La API ofrece `GET /health`, `GET /health/ready` y `POST /v1/translate`. Consult
 
 ## Aplicación Android nativa (en desarrollo)
 
-La rama `feature/android-native-app` contiene el inicio de una aplicación Kotlin + Jetpack Compose, separada del modo Termux:
+La rama `feature/native-llama-engine` amplía la aplicación Kotlin + Jetpack Compose con una primera integración nativa, separada del modo Termux:
 
-- Proyecto Gradle Android con `minSdk 26`, `compileSdk 35` y objetivo inicial `arm64-v8a` pendiente de enlazar al motor nativo.
-- Primera migración de prompts, perfiles, selección de términos y validación a Kotlin.
-- Glosario Fate original empaquetado como recurso, sin modificar su contenido.
-- Esquema para un Lore Pack con procedencia y niveles de certeza; el paquete inicial está vacío deliberadamente para no introducir afirmaciones de canon sin fuentes.
-- Pruebas unitarias Kotlin y workflow de CI para generar una APK debug.
+- Proyecto Gradle Android con `minSdk 26`, `compileSdk 35`, NDK fijado y ABI inicial `arm64-v8a`.
+- llama.cpp `b5401` integrado por CMake/JNI para inferencia CPU.
+- Catálogo inicial Qwen3 1.7B Q4_K_M con revisión, tamaño y SHA-256 fijados.
+- Descarga explícita reanudable con comprobación de tamaño y SHA-256 antes de activar el GGUF.
+- Pantalla inicial para descargar, cargar el modelo y ejecutar traducción local.
+- Pruebas unitarias del catálogo y CI que compila el motor nativo.
 
-**Estado real:** es un esqueleto de aplicación y núcleo de traducción; todavía no traduce con IA. La integración JNI de llama.cpp, el gestor seguro de GGUF, las descargas reanudables y la evaluación de modelos están pendientes. No instalar como versión funcional todavía.
+**Estado real:** la ruta de inferencia nativa ya está implementada en código, pero su compilación y funcionamiento todavía deben confirmarse en CI y en el Vivo Y39 5G. La pantalla usa un prompt inicial y aún no está conectada completamente con perfiles, construcción de prompts, glosario contextual y validador Kotlin. No considerar todavía una versión estable. Consulta [el estado de integración nativa](docs/NATIVE_RUNTIME_STATUS.md).
 
 Para abrirla, importa la raíz del repositorio en Android Studio y selecciona el módulo `:app`. La CI usa Gradle 8.9 y JDK 17.

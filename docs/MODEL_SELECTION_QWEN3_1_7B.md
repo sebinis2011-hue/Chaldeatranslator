@@ -1,6 +1,6 @@
 # Selección inicial del modelo local
 
-Estado: **selección aprobada; artefacto pendiente de verificación antes de habilitar descargas**.
+Estado: **selección aprobada; artefacto y SHA-256 fijados en el catálogo de la app**.
 
 ## Decisión
 
@@ -26,14 +26,14 @@ Referencias técnicas:
 
 ## Puerta de seguridad: no inventar hashes
 
-No registrar una URL de descarga activa ni un SHA-256 supuesto. Antes de publicar el modelo en el catálogo instalable, CI o una revisión controlada debe obtener de la revisión exacta de Hugging Face:
-1. ID inmutable de revisión (commit).
-2. Nombre exacto del archivo.
-3. Tamaño exacto en bytes.
-4. SHA-256 del archivo completo, obtenido de metadatos fiables del repositorio o calculado sobre el artefacto descargado.
-5. Licencia y atribución aplicables al modelo y a la cuantización.
+Metadatos recuperados de la API de Hugging Face para la revisión exacta:
+1. Revisión: `dcb19155b962dbb6389f4691a982043a8e651022`.
+2. Archivo: `Qwen_Qwen3-1.7B-Q4_K_M.gguf`.
+3. Tamaño: `1,282,439,584` bytes.
+4. SHA-256 LFS: `72c5c3cb38fa32d5256e2fe30d03e7a64c6c79e668ad84057e3bd66e250b24fb`.
+5. La atribución del cuantizador se conserva como `bartowski`; revisar avisos de licencia antes de redistribuir.
 
-La aplicación debe rechazar un manifiesto incompleto. El hash no puede descargarse del mismo endpoint mutable que entrega el GGUF sin una raíz de confianza fijada en la app.
+El catálogo de la app fija la revisión, el tamaño y el SHA-256 en el código versionado. El gestor rechaza archivos que no coincidan.
 
 ## Perfil inicial conservador
 

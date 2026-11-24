@@ -2,7 +2,7 @@ name: Android native app
 
 on:
   push:
-    branches: [main, "feature/android-native-app"]
+    branches: [main, "feature/android-native-app", "feature/native-llama-engine"]
     paths:
       - "app/**"
       - "*.gradle.kts"
@@ -35,17 +35,17 @@ jobs:
           gradle-version: "8.9"
       - uses: android-actions/setup-android@v3
         with:
-          # "tools" is a retired SDK package and causes sdkmanager to fail.
           packages: "platform-tools"
-      - name: Install Android SDK
-        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Install Android SDK and native toolchain
+        run: |
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" "cmake;3.22.1" "ndk;27.2.12479018"
       - name: Run Android unit tests
         run: gradle :app:testDebugUnitTest
-      - name: Assemble debug APK
-        run: gradle :app:assembleDebug
+      - name: Assemble arm64 debug APK with llama.cpp
+        run: gradle :app:assembleDebug --stacktrace
       - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: chaldeatranslator-debug
+          name: chaldeatranslator-arm64-debug
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
