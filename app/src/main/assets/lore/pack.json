@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "pack_id": "type-moon-core-seed",
+  "language": "es-419",
+  "status": "seed",
+  "description": "Estructura inicial. No contiene afirmaciones de lore sin fuente primaria registrada.",
+  "records": []
+}
