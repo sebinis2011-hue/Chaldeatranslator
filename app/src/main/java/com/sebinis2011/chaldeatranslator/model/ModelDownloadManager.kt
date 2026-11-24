@@ -31,6 +31,7 @@ class ModelDownloadManager(private val modelDirectory:File) {
   require(storage.availableBytes >= model.sizeBytes + 128L * 1024L * 1024L) { "No hay espacio libre suficiente para descargar el GGUF con margen." }
   val savedEtag = etagFile.takeIf { it.isFile }?.readText()?.takeIf { it.isNotBlank() }
   var offset=part.takeIf{it.isFile}?.length()?:0L
+  if(offset>0L && savedEtag==null){part.delete();offset=0L}
   if(offset>model.sizeBytes){part.delete();etagFile.delete();offset=0L}
   var connection:HttpURLConnection?=null
   try {
